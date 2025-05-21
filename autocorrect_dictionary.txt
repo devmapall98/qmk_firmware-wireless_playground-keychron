@@ -1,0 +1,16 @@
+:thier          -> their
+fitler          -> filter
+lenght          -> length
+ouput           -> output
+widht           -> width
+heigt           -> height
+succes:         -> success
+fuly:           -> fully
+sucesfully:     -> successfully
+successfully:   -> successfully
+gemente         -> gemeente
+geemente        -> gemeente
+gronigen        -> groningen
+otawrty:        -> otwarty
+addres:         -> address
+wosrt:          -> worst

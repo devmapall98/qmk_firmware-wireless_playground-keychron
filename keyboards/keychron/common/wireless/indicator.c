@@ -14,6 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Key Matrix to LED Index
+// {  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, __, 13, 14, 15 },
+// { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32 },
+// { 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 },
+// { 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, __, __, __, __ },
+// { 63, __, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, __, __, 75, __ },
+// { 76, 77, 78, __, __, __, 79, __, __, __, 80, 81, 82, 83, 84, 85, 86 },
+
 #include "quantum.h"
 #include "indicator.h"
 #include "transport.h"
@@ -104,6 +112,8 @@ static pin_t p24g_led_pin_list[P24G_HOST_DEVICES_COUNT] = P24G_HOST_LED_PIN_LIST
 #    define SET_ALL_LED_OFF() led_matrix_set_value_all(0)
 #    define SET_LED_OFF(idx) led_matrix_set_value(idx, 0)
 #    define SET_LED_ON(idx) led_matrix_set_value(idx, 255)
+#    define SET_LED_ON_GREEN(idx) rgb_matrix_set_color(idx, 255)
+#    define SET_LED_ON_RED(idx) rgb_matrix_set_color(idx, 255)
 #    define SET_LED_BT(idx) led_matrix_set_value(idx, 255)
 #    define SET_LED_P24G(idx) led_matrix_set_value(idx, 255)
 #    define SET_LED_LOW_BAT(idx) led_matrix_set_value(idx, 255)
@@ -130,10 +140,12 @@ static pin_t p24g_led_pin_list[P24G_HOST_DEVICES_COUNT] = P24G_HOST_LED_PIN_LIST
 #    define LED_NONE_INDICATORS_KB rgb_matrix_none_indicators_kb
 #    define SET_ALL_LED_OFF() rgb_matrix_set_color_all(0, 0, 0)
 #    define SET_LED_OFF(idx) rgb_matrix_set_color(idx, 0, 0, 0)
-#    define SET_LED_ON(idx) rgb_matrix_set_color(idx, 255, 255, 255)
+#    define SET_LED_ON(idx) rgb_matrix_set_color(idx, 255, 32, 0)
+#    define SET_LED_ON_GREEN(idx) rgb_matrix_set_color(idx, 0, 255, 0)
+#    define SET_LED_ON_RED(idx) rgb_matrix_set_color(idx, 255, 0, 0)
 #    define SET_LED_BT(idx) rgb_matrix_set_color(idx, 0, 0, 255)
 #    define SET_LED_P24G(idx) rgb_matrix_set_color(idx, 0, 255, 0)
-#    define SET_LED_LOW_BAT(idx) rgb_matrix_set_color(idx, 255, 0, 0)
+#    define SET_LED_LOW_BAT(idx) rgb_matrix_set_color(idx, 255, 128, 0)
 #    define LED_DRIVER_IS_ENABLED rgb_matrix_is_enabled
 #    define LED_DRIVER_EECONFIG_RELOAD()                                                       \
         eeprom_read_block(&rgb_matrix_config, EECONFIG_RGB_MATRIX, sizeof(rgb_matrix_config)); \
@@ -603,6 +615,18 @@ void indicator_task(void) {
     indicator_battery_low();
 }
 
+
+
+
+// 888    888 8888888888 8888888b.  8888888888 
+// 888    888 888        888   Y88b 888        
+// 888    888 888        888    888 888        
+// 8888888888 8888888    888   d88P 8888888    
+// 888    888 888        8888888P"  888        
+// 888    888 888        888 T88b   888        
+// 888    888 888        888  T88b  888        
+// 888    888 8888888888 888   T88b 8888888888
+
 #if defined(LED_MATRIX_ENABLE) || defined(RGB_MATRIX_ENABLE)
 __attribute__((weak)) void os_state_indicate(void) {
 #    if defined(RGB_DISABLE_WHEN_USB_SUSPENDED) || defined(LED_DISABLE_WHEN_USB_SUSPENDED)
@@ -610,20 +634,31 @@ __attribute__((weak)) void os_state_indicate(void) {
 #    endif
 
 #    if defined(NUM_LOCK_INDEX)
-    if (host_keyboard_led_state().num_lock) {
+    if (!host_keyboard_led_state().num_lock) {
+        int num_lock_leds[10] = {13, 14, 15, 30, 31, 32, 46, 47, 48, 49};
 #        if defined(DIM_NUM_LOCK)
-        SET_LED_OFF(NUM_LOCK_INDEX);
+        for (int i = 0; i < 10; i++) {
+            SET_LED_OFF(num_lock_leds[i]);
+        }
 #        else
-        SET_LED_ON(NUM_LOCK_INDEX);
+        for (int i = 0; i < 10; i++) {
+            SET_LED_ON(num_lock_leds[i]);
+        }
 #        endif
     }
 #    endif
 #    if defined(CAPS_LOCK_INDEX)
     if (host_keyboard_led_state().caps_lock) {
 #        if defined(DIM_CAPS_LOCK)
-        SET_LED_OFF(CAPS_LOCK_INDEX);
+        SET_LED_OFF(50);
+        SET_LED_OFF(34);
+        SET_LED_OFF(51);
+        SET_LED_OFF(33);
 #        else
-        SET_LED_ON(CAPS_LOCK_INDEX);
+        SET_LED_ON(50);
+        SET_LED_ON(34);
+        SET_LED_ON(51);
+        SET_LED_ON(33);
 #        endif
     }
 #    endif
@@ -642,6 +677,30 @@ __attribute__((weak)) void os_state_indicate(void) {
         SET_LED_ON(KANA_LOCK_INDEX);
     }
 #    endif
+
+    if (!keymap_config.nkro) {
+        SET_LED_ON(69);
+        SET_LED_ON(56);
+        SET_LED_ON(57);
+    }
+
+    // if (autocorrect_is_enabled() == true) {
+    //     SET_LED_ON_GREEN(51);
+    // }
+
+    if (keymap_config.no_gui) {
+        int no_gui_leds[5] = {77, 81, 63, 72, 73};
+        for (int i = 0; i < 5; i++) {
+            SET_LED_ON_RED(no_gui_leds[i]);
+        }
+    }
+
+    if (is_caps_word_on() == true) {
+        int caps_word_leds[2] = {63, 74};
+        for (int i = 0; i < 2; i++) {
+            SET_LED_ON(caps_word_leds[i]);
+        }
+    }
 }
 
 bool LED_INDICATORS_KB(void) {

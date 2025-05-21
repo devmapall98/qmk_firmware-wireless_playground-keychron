@@ -34,6 +34,12 @@
 #    define SNLED27351_CURRENT_TUNE \
         { 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34, 0x34 }
 
+/* CUSTOM USER STUFF */
+#    define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_SOLID_COLOR
+#    define RGB_MATRIX_DEFAULT_HUE 190
+#    define RGB_MATRIX_DEFAULT_SAT 128
+#    define RGB_MATRIX_DEFAULT_VAL RGB_MATRIX_MAXIMUM_BRIGHTNESS
+
 /* Set to infinit, which is use in USB mode by default */
 #    define RGB_MATRIX_TIMEOUT RGB_MATRIX_TIMEOUT_INFINITE
 
@@ -44,6 +50,7 @@
 
 /* Indications */
 #    define CAPS_LOCK_INDEX 50
+#    define NUM_LOCK_INDEX 50
 #    define LOW_BAT_IND_INDEX \
         { 79 }
 
@@ -51,3 +58,8 @@
 #    define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 
 #endif
+
+#    define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
+#    define CAPS_WORD_IDLE_TIMEOUT 3000  // 3 seconds
+#    define DYNAMIC_MACRO_DELAY 100 // 0.1 seconds
+#    define DYNAMIC_MACRO_NO_NESTING
